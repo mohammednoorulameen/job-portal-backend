@@ -19,10 +19,10 @@ export class JobEntity {
   jobType: string;
 
   @Column('int')
-  salaryMin: number;
+  minSalary: number;
 
   @Column('int')
-  salaryMax: number;
+  maxSalary: number;
 
   @Column('text')
   jobDescription: string;

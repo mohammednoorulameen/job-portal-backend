@@ -1,35 +1,34 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { JobEntity } from './entities/job.entity';
 import { Repository } from 'typeorm';
+import { JobEntity } from './entities/job.entity';
 
 @Injectable()
 export class JobsService {
   constructor(
     @InjectRepository(JobEntity)
-    private readonly jobRepository: Repository<JobEntity>,
+    private jobRepo: Repository<JobEntity>,
   ) {}
 
-  /**
-   * Saving the job in the database
-   */
   async createJob(jobData: Partial<JobEntity>): Promise<JobEntity> {
-    return this.jobRepository.save(jobData);
+    return this.jobRepo.save(jobData);
   }
 
-  /**
-   * Get jobs from the database with filters
-   */
-  
   async getJobs(filters: any): Promise<JobEntity[]> {
-    const query = this.jobRepository.createQueryBuilder('job');
+    const query = this.jobRepo.createQueryBuilder('job');
+
+    console.log('Filters received in backend:', filters); 
 
     if (filters.search) {
-      query.andWhere('job.jobTitle ILIKE :jobTitle', { jobTitle: `%${filters.search}%` });
+      query.andWhere('job.jobTitle ILIKE :search', {
+        search: `%${filters.search}%`,
+      });
     }
 
     if (filters.location) {
-      query.andWhere('job.location ILIKE :location', { location: `%${filters.location}%` });
+      query.andWhere('job.location ILIKE :location', {
+        location: `%${filters.location}%`,
+      });
     }
 
     if (filters.jobType) {
@@ -37,10 +36,7 @@ export class JobsService {
     }
 
     if (filters.salaryRange) {
-      let [min, max] = filters.salaryRange.includes('-')
-        ? filters.salaryRange.split('-').map(Number)
-        : filters.salaryRange.split(',').map(Number);
-
+      const [min, max] = filters.salaryRange.split('-').map(Number);
       if (!isNaN(min) && !isNaN(max)) {
         query.andWhere('job.salaryMin >= :min AND job.salaryMax <= :max', {
           min,
