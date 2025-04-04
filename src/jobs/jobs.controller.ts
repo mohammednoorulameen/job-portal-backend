@@ -23,10 +23,10 @@ export class JobsController {
 
   @Get()
   async getJobs(@Query() filters: any): Promise<JobEntity[]> {
-    console.log('📥 GET /jobs called with filters:', filters); // 👈 Log filters from frontend
+    console.log('GET /jobs called with filters:', filters); 
   
     const jobs = await this.jobsService.getJobs(filters);
-    console.log('📤 Responding with jobs:', jobs); // 👈 Log result being sent
+    console.log('Responding with jobs:', jobs); 
   
     return jobs;
   }
@@ -49,9 +49,9 @@ async createJob(
   @Body() job: Partial<JobEntity>,
   @UploadedFile() file: MulterFile,
 ): Promise<JobEntity> {
-  console.log('📥 POST /jobs called with body:', job);
+  console.log('POST /jobs called with body:', job);
 
-  // ✅ Convert date to ISO
+  // Convert date to ISO
   if (job.applicationDeadline) {
     job.applicationDeadline = new Date(job.applicationDeadline).toISOString();
   }
@@ -61,7 +61,7 @@ async createJob(
   }
 
   const savedJob = await this.jobsService.createJob(job);
-  console.log('✅ Job saved:', savedJob);
+  console.log('Job saved:', savedJob);
   return savedJob;
 }
 }
